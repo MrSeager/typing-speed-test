@@ -18,7 +18,7 @@ export default function HeaderNav () {
                     width={25}
                     height={25}
                     />
-                    <h1>Personal best: <span>92 WPM</span></h1>
+                    <h1 className="text-[#727279]">Personal best: <span className="text-lg text-white">92 WPM</span></h1>
                 </div>
             </nav>
         </header>

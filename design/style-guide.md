@@ -14,15 +14,15 @@ The designs were created to the following widths:
 ### Neutral
 
 - **Neutral 900**: hsl(0, 0%, 7%)
-- **Neutral 800**: hsl(0, 0%, 15%)
-- **Neutral 500**: hsl(240, 3%, 46%)
+- **Neutral 800**: hsl(0, 0%, 15%) #262626
+- **Neutral 500**: hsl(240, 3%, 46%) #727279
 - **Neutral 400**: hsl(240, 1%, 59%)
 - **Neutral 0**: hsl(0, 0%, 100%)
 
 ### Blue
 
-- **Blue 600**: hsl(214, 100%, 55%)
-- **Blue 400**: hsl(210, 100%, 65%)
+- **Blue 600**: hsl(214, 100%, 55%) #1a7dff
+- **Blue 400**: hsl(210, 100%, 65%) #4da6ff
 
 ### Red
 
