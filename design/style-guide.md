@@ -26,11 +26,11 @@ The designs were created to the following widths:
 
 ### Red
 
-- **Red 500**: hsl(354, 63%, 57%)
+- **Red 500**: hsl(354, 63%, 57%) #d64c5a
 
 ### Green
 
-- **Green 500**: hsl(140, 63%, 57%)
+- **Green 500**: hsl(140, 63%, 57%) #4cd67a
 
 ### Yellow
 

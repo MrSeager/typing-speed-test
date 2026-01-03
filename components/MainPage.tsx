@@ -1,6 +1,6 @@
 'use client'
 //Components
-import { useState } from "react";
+import { useState, useRef } from "react";
 //Types
 import { DifficultyData, TextItem, DifficultyProps } from "@/types/types";
 
@@ -12,14 +12,24 @@ export default function MainPage ({ data }: MainPageProps) {
     const [difficulty, setDifficulty] = useState<DifficultyProps>('easy');
     const [textId, setTextId] = useState<number>(1);
     const [mode, setMode] = useState<string>('timed');
+    const [start, setStart] = useState<boolean>(false);
+
+    const [typed, setTyped] = useState<string>('');
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const [wpm, setWpm] = useState<number>(40);
     const [accuracy, setAccuracy] = useState<number>(94);
     const [timeInSec, setTimeInSec] = useState<number>(46);
 
-    const currentText = data[difficulty].find(
-        (item: TextItem) => item.id === `${difficulty}-${textId}`
-    )?.text;
+    const currentText =
+    data[difficulty].find(item => item.id === `${difficulty}-${textId}`)?.text
+    ?? "";
+
+
+    const startTest = () => {
+        setStart(true);
+        setTimeout(() => inputRef.current?.focus(), 50);
+    }
 
     return (
         <main className="max-w-[12orem] w-full px-15">
@@ -89,10 +99,38 @@ export default function MainPage ({ data }: MainPageProps) {
                 </div>
             </div>
             <div className="relative py-5 min-h-100">
-                <p className="text-[35px] text-base/12">{currentText}</p>
-                <div className="absolute flex flex-col gap-2 items-center justify-center top-0 w-full h-full backdrop-blur-md">
+                <p className="text-[35px] text-base/12 leading-[1.2] font-mono flex flex-wrap">
+                    {currentText.split("").map((char, i) => {
+                        let color = "";
+
+                        if (i < typed.length) { 
+                            color = typed[i] === char ? "text-[#4cd67a]" : "text-[#d64c5a] decoration-[2px] underline underline-offset-6"; 
+                        } else { 
+                            color = "text-white"; 
+                        }
+
+                        return (
+                            <span key={i} className={`${color} duration-300`}>
+                                {char === " " ? "\u00A0" : char}
+                            </span>
+                        );
+                    })}
+                </p>
+                <input 
+                    ref={inputRef}
+                    autoFocus
+                    type="text"
+                    value={typed}
+                    onChange={(e) => setTyped(e.target.value)}
+                    className="absolute opacity-0 pointer-events-none"
+                    disabled={!start}
+                    aria-hidden='true'
+                    tabIndex={-1}
+                />
+                <div className={`absolute flex flex-col gap-2 items-center justify-center top-0 w-full ${start === false ? 'h-full' : 'h-0'} overflow-hidden backdrop-blur-md duration-500`}>
                     <button 
                         type="button"
+                        onClick={startTest}
                         className="bg-[#1a7dff] px-5 py-2 outline-2 outline-offset-3 outline-[#4da6ff] rounded-[5px] duration-500
                                     hover:outline-transparent hover:bg-[#4da6ff]"
                     >
