@@ -9,7 +9,7 @@ export default function Home() {
   const data: DifficultyData = typingData;
 
   return (
-    <div className="flex flex-col gap-3 min-h-screen justify-center bg-[hsl(0, 0%, 7%)] font-sans">
+    <div className="flex flex-col gap-3 min-h-screen justify-start py-5 bg-[hsl(0, 0%, 7%)] font-sans">
       <HeaderNav />
       <MainPage 
         data={data}
