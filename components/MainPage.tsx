@@ -1,6 +1,6 @@
 'use client'
 //Components
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import TypingSection from "./TypingSection";
 import EndSection from "./EndSection";
@@ -21,13 +21,21 @@ export default function MainPage ({ data }: MainPageProps) {
     const [typed, setTyped] = useState<string>('');
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const [wpm, setWpm] = useState<number>(0);
-    const [timeInSec, setTimeInSec] = useState<number>(60);
+    const [timeInSec, setTimeInSec] = useState(60);
+    const [elapsed, setElapsed] = useState(0);
+
 
     const currentText = data[difficulty].find(item => item.id === `${difficulty}-${textId}`)?.text ?? "";
 
     const startTest = () => {
         setStart(true);
+
+        if (mode === 'timed') { 
+            setTimeInSec(60); 
+        } else { 
+            setTimeInSec(0); 
+        }
+
         setTimeout(() => inputRef.current?.focus(), 50);
     }
 
@@ -36,20 +44,80 @@ export default function MainPage ({ data }: MainPageProps) {
         setTextId(Math.floor(Math.random() * 10) + 1);
     }
 
-    const accuracy = typed.length
+    const accuracyInPercent = typed.length
     ? Math.round(
         (typed.split("").filter((c, i) => c === currentText[i]).length / typed.length) * 100
       )
     : 100;
 
+    const wpm = elapsed > 0
+        ? Math.round((typed.length / 5) / (elapsed / 60))
+        : 0;
+
+    const handleTyping = (value: string) => {
+        // Prevent typing beyond the text length
+        if (value.length > currentText.length) return;
+
+        setTyped(value);
+
+        // Check if test is finished
+        if (value.length === currentText.length) {
+            setEnd(true);
+        }
+    };
+
+    const handleModeChange = (newMode: string) => {
+        setMode(newMode);
+        if (newMode === 'timed') {
+            setTimeInSec(60);
+        } else {
+            setTimeInSec(0);
+        }
+    }
+
+    const handleRestart = () => {
+        setStart(false);
+        setEnd(false);
+        setTyped("");
+        setElapsed(0);
+
+        if (mode === 'timed') { 
+            setTimeInSec(60); 
+        } else { 
+            setTimeInSec(0); 
+        }
+    }
+
+    useEffect(() => {
+        if (!start || end) return;
+
+        const interval = setInterval(() => {
+            setElapsed(prev => prev + 1);
+
+            setTimeInSec(prev => {
+                if (mode === 'timed') {
+                    if (prev <= 1) {
+                        setEnd(true);
+                        return 0;
+                    }
+                    return prev - 1;
+                } else {
+                    return prev + 1;
+                }
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [start, end, mode]);
+
     return (
-        <main className="max-w-[12orem] w-full px-15 flex">
-            <div className={`${end === false ? 'w-full' : 'w-0 h-0'} duration-500 overflow-hidden`}>
+        <main className="max-w-[12orem] w-full px-15 flex flex-col">
+            <div className={`${end === false ? 'h-full' : 'h-0'} duration-500 overflow-hidden`}>
                 <div className="flex items-center justify-between border-b py-5">
                     <div className="flex gap-3">
                         <h2 className="text-[#727279]">WPM: <span className="text-white text-lg font-semibold">{wpm}</span></h2>
-                        <h2 className="text-[#727279]">Accuracy: <span className={`${accuracy === 100 ? 'text-[#4cd67a]' : 'text-[#d64c5a]'} duration-500 text-lg font-semibold`}>{accuracy}%</span></h2>
-                        <h2 className="text-[#727279]">Time: <span className="text-white text-lg font-semibold">0:46</span></h2>
+                        <h2 className="text-[#727279]">Accuracy: <span className={`${accuracyInPercent === 100 ? 'text-[#4cd67a]' : 'text-[#d64c5a]'} duration-500 text-lg font-semibold`}>{accuracyInPercent}%</span></h2>
+                        <h2 className="text-[#727279]">Time: <span className="text-white text-lg font-semibold">{Math.floor(timeInSec / 60)}:{String(timeInSec % 60).padStart(2, "0")}</span></h2>
                     </div>
                     <div className="flex gap-3">
                         <div className="flex gap-2">
@@ -92,7 +160,7 @@ export default function MainPage ({ data }: MainPageProps) {
                             <h2 className="text-[#727279]">Mode:</h2>
                             <button 
                                 type="button"
-                                onClick={() => setMode('timed')}
+                                onClick={() => handleModeChange('timed')}
                                 disabled={start === true}
                                 className={`${mode === 'timed' ? 'outline-[#4da6ff]' : 'outline-transparent'} 
                                             cursor-pointer outline-2 outline-offset-3 rounded-[10px] px-2 border border-[#727279] duration-500
@@ -103,7 +171,7 @@ export default function MainPage ({ data }: MainPageProps) {
                             </button>
                             <button 
                                 type="button"
-                                onClick={() => setMode('passage')}
+                                onClick={() => handleModeChange('passage')}
                                 disabled={start === true}
                                 className={`${mode === 'passage' ? 'outline-[#4da6ff]' : 'outline-transparent'} 
                                             cursor-pointer outline-2 outline-offset-3 rounded-[10px] px-2 border border-[#727279] duration-500
@@ -138,7 +206,7 @@ export default function MainPage ({ data }: MainPageProps) {
                         autoFocus
                         type="text"
                         value={typed}
-                        onChange={(e) => setTyped(e.target.value)}
+                        onChange={(e) => handleTyping(e.target.value)}
                         className="absolute opacity-0 pointer-events-none"
                         disabled={!start}
                         aria-hidden='true'
@@ -147,6 +215,7 @@ export default function MainPage ({ data }: MainPageProps) {
                     <div className="py-5 flex items-center justify-center border-t mt-5">
                         <button 
                             type="button"
+                            onClick={() => handleRestart()}
                             className="bg-[#262626] cursor-pointer px-3 py-2 rounded-[5px]"
                         >
                             Restart Test
@@ -168,7 +237,11 @@ export default function MainPage ({ data }: MainPageProps) {
             <EndSection 
                 end={end} 
                 wpm={wpm}
-                accuracy={accuracy}
+                timeInSec={timeInSec}
+                accuracy={accuracyInPercent}
+                symbolsRight={typed.split("").filter((c, i) => c === currentText[i]).length} 
+                symbolsSum={currentText.length}
+                handleRestart={handleRestart}
             />
         </main>
     );

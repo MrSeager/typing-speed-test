@@ -5,9 +5,13 @@ interface EndSectionProps {
     end: boolean;
     wpm: number;
     accuracy: number;
+    timeInSec?: number | null;
+    symbolsRight: number;
+    symbolsSum: number;
+    handleRestart: () => void;
 }
 
-export default function EndSection ({ end, wpm, accuracy }: EndSectionProps) {
+export default function EndSection ({ end, wpm, accuracy, timeInSec = null, symbolsRight, symbolsSum, handleRestart }: EndSectionProps) {
     const endLines = {
         firstTime: [
             'Baseline Established',
@@ -27,7 +31,7 @@ export default function EndSection ({ end, wpm, accuracy }: EndSectionProps) {
     }
 
     return (
-        <div className={`${end === true ? 'w-full py-15' : 'w-0 py-0'} flex flex-col gap-5 items-center justify-center overflow-hidden`}>
+        <div className={`${end === true ? 'h-full py-15' : 'h-0 py-0'} flex flex-col gap-5 items-center justify-center overflow-hidden`}>
             <div className="relative">
                 <span className="absolute z-0 inline-flex h-full w-full animate-ping rounded-full bg-[#4cd67a] opacity-75"></span>
                 <Image 
@@ -39,7 +43,7 @@ export default function EndSection ({ end, wpm, accuracy }: EndSectionProps) {
             </div>
             <h3 className="text-[30px] font-bold text-center text-base/7">{endLines.firstTime[0]}</h3>
             <p className="text-base/5 text-[#727279]">{endLines.firstTime[1]}</p>
-            <div className="grid grid-cols-3 gap-4">
+            <div className={`grid ${timeInSec === null ? 'grid-cols-3' : 'grid-cols-4'} gap-4`}>
                 <div className="border border-[#262626] rounded rounded-[10px] px-4 py-2">
                     <h4 className="text-[#727279]">WPM:</h4>
                     <h4 className="font-bold text-lg">{wpm}</h4>
@@ -51,14 +55,24 @@ export default function EndSection ({ end, wpm, accuracy }: EndSectionProps) {
                 <div className="border border-[#262626] rounded rounded-[10px] px-4 py-2">
                     <h4 className="text-[#727279]">Characters:</h4>
                     <h4 className="font-bold text-[#727279] text-lg">
-                        <span className="text-[#4cd67a]">120</span>
+                        <span className="text-[#4cd67a]">{symbolsRight}</span>
                         /
-                        <span className="text-[#d64c5a]">5</span>
+                        <span className="text-[#d64c5a]">{symbolsSum}</span>
                     </h4>
                 </div>
+                {timeInSec !== null ?
+                <div className="border border-[#262626] rounded rounded-[10px] px-4 py-2">
+                    <h4 className="text-[#727279]">Time:</h4>
+                    <h4 className="font-bold text-[#727279] text-lg">
+                        <span className="text-[#4cd67a]">{Math.floor(timeInSec / 60)}:{String(timeInSec % 60).padStart(2, "0")}</span>
+                    </h4>
+                </div>
+                : ''
+                }
             </div>
             <button 
                 type="button"
+                onClick={() => handleRestart()}
                 className="bg-white border border-white text-[#262626] font-bold rounded px-4 py-2 duration-500
                             hover:bg-transparent hover:text-white
                             active:bg-transparent active:text-white"
