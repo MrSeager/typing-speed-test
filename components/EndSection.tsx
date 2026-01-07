@@ -9,9 +9,10 @@ interface EndSectionProps {
     symbolsRight: number;
     symbolsSum: number;
     handleRestart: () => void;
+    mode: string;
 }
 
-export default function EndSection ({ end, wpm, accuracy, timeInSec = null, symbolsRight, symbolsSum, handleRestart }: EndSectionProps) {
+export default function EndSection ({ mode, end, wpm, accuracy, timeInSec = null, symbolsRight, symbolsSum, handleRestart }: EndSectionProps) {
     const endLines = {
         firstTime: [
             'Baseline Established',
@@ -43,7 +44,7 @@ export default function EndSection ({ end, wpm, accuracy, timeInSec = null, symb
             </div>
             <h3 className="text-[30px] font-bold text-center text-base/7">{endLines.firstTime[0]}</h3>
             <p className="text-base/5 text-[#727279]">{endLines.firstTime[1]}</p>
-            <div className={`grid ${timeInSec === null ? 'grid-cols-3' : 'grid-cols-4'} gap-4`}>
+            <div className={`grid ${mode === 'timed' ? 'grid-cols-3' : 'grid-cols-4'} gap-4`}>
                 <div className="border border-[#262626] rounded rounded-[10px] px-4 py-2">
                     <h4 className="text-[#727279]">WPM:</h4>
                     <h4 className="font-bold text-lg">{wpm}</h4>
@@ -60,14 +61,14 @@ export default function EndSection ({ end, wpm, accuracy, timeInSec = null, symb
                         <span className="text-[#d64c5a]">{symbolsSum}</span>
                     </h4>
                 </div>
-                {timeInSec !== null ?
-                <div className="border border-[#262626] rounded rounded-[10px] px-4 py-2">
-                    <h4 className="text-[#727279]">Time:</h4>
-                    <h4 className="font-bold text-[#727279] text-lg">
-                        <span className="text-[#4cd67a]">{Math.floor(timeInSec / 60)}:{String(timeInSec % 60).padStart(2, "0")}</span>
-                    </h4>
-                </div>
-                : ''
+                {mode === 'passage' && timeInSec !== null ?
+                    <div className="border border-[#262626] rounded rounded-[10px] px-4 py-2">
+                        <h4 className="text-[#727279]">Time:</h4>
+                        <h4 className="font-bold text-[#727279] text-lg">
+                            <span className="text-[#4cd67a]">{Math.floor(timeInSec / 60)}:{String(timeInSec % 60).padStart(2, "0")}</span>
+                        </h4>
+                    </div>
+                    : ''
                 }
             </div>
             <button 
