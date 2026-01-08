@@ -1,7 +1,13 @@
+'use client';
 //Components
+import { useState } from "react";
 import Image from "next/image";
 
-export default function HeaderNav () {
+interface HeaderNavProps {
+    bestWpm: number
+}
+
+export default function HeaderNav ({ bestWpm }: HeaderNavProps) {
     return(
         <header className="max-w-[12orem] w-full px-15">
             <nav className="w-full flex items-center justify-between">
@@ -18,7 +24,7 @@ export default function HeaderNav () {
                     width={25}
                     height={25}
                     />
-                    <h1 className="text-[#727279]">Personal best: <span className="text-lg text-white">92 WPM</span></h1>
+                    <h1 className="text-[#727279]">Personal best: <span className="text-lg text-white">{bestWpm} WPM</span></h1>
                 </div>
             </nav>
         </header>

@@ -8,9 +8,13 @@ import { DifficultyData, DifficultyProps } from "@/types/types";
 
 interface MainPageProps {
     data: DifficultyData;
+    bestWpm: number;
+    setBestWpm: (bestWpm: number) => void;
 }
 
-export default function MainPage ({ data }: MainPageProps) {
+export default function MainPage ({ data, bestWpm, setBestWpm }: MainPageProps) {
+
+
     const [difficulty, setDifficulty] = useState<DifficultyProps>('easy');
     const [textId, setTextId] = useState<number>(1);
     const [mode, setMode] = useState<string>('timed');
@@ -23,15 +27,16 @@ export default function MainPage ({ data }: MainPageProps) {
     const [elapsed, setElapsed] = useState<number>(0);
 
     const currentText = data[difficulty].find(item => item.id === `${difficulty}-${textId}`)?.text ?? "";
-
+    
+    //Counting correctly typing symbols
+    const correctChars = typed.split("").filter((c, i) => c === currentText[i]).length;
+    //Puting correctly typing symbols in percentage
     const accuracyInPercent = typed.length
-    ? Math.round(
-        (typed.split("").filter((c, i) => c === currentText[i]).length / typed.length) * 100
-      )
-    : 100;
+        ? Math.round((correctChars / typed.length) * 100)
+        : 100;
 
     const wpm = elapsed > 0
-        ? Math.round((typed.length / 5) / (elapsed / 60))
+        ? Math.round((correctChars / 5) / (elapsed / 60))
         : 0;
 
     const handleRestart = () => {
@@ -60,6 +65,7 @@ export default function MainPage ({ data }: MainPageProps) {
                 typed={typed} setTyped={setTyped}
                 setElapsed={setElapsed} currentText={currentText}
                 wpm={wpm} accuracyInPercent={accuracyInPercent}
+                bestWpm={bestWpm} setBestWpm={setBestWpm}
             />
             <EndSection 
                 mode={mode}
@@ -70,6 +76,7 @@ export default function MainPage ({ data }: MainPageProps) {
                 symbolsRight={typed.split("").filter((c, i) => c === currentText[i]).length} 
                 symbolsSum={currentText.length}
                 handleRestart={handleRestart}
+                bestWpm={bestWpm}
             />
         </main>
     );

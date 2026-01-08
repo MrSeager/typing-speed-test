@@ -10,9 +10,15 @@ interface EndSectionProps {
     symbolsSum: number;
     handleRestart: () => void;
     mode: string;
+    bestWpm: number;
 }
 
-export default function EndSection ({ mode, end, wpm, accuracy, timeInSec = null, symbolsRight, symbolsSum, handleRestart }: EndSectionProps) {
+export default function EndSection ({ 
+                                        mode, end, wpm, accuracy, 
+                                        timeInSec = null, 
+                                        symbolsRight, symbolsSum, 
+                                        handleRestart, bestWpm 
+                                    }: EndSectionProps) {
     const endLines = {
         firstTime: [
             'Baseline Established',
@@ -31,6 +37,18 @@ export default function EndSection ({ mode, end, wpm, accuracy, timeInSec = null
         ]
     }
 
+    const getEndMessage = () => {
+        if (bestWpm === 0)
+            return endLines.firstTime;
+
+        if (wpm > bestWpm)
+            return endLines.higerScore;
+
+        return endLines.lowerScore;
+    };
+
+    const endMessages = getEndMessage();
+
     return (
         <div className={`${end === true ? 'h-full py-15' : 'h-0 py-0'} flex flex-col gap-5 items-center justify-center overflow-hidden`}>
             <div className="relative">
@@ -42,8 +60,10 @@ export default function EndSection ({ mode, end, wpm, accuracy, timeInSec = null
                     height={50}
                 />
             </div>
-            <h3 className="text-[30px] font-bold text-center text-base/7">{endLines.firstTime[0]}</h3>
-            <p className="text-base/5 text-[#727279]">{endLines.firstTime[1]}</p>
+            <h3 className="text-[30px] font-bold text-center text-base/7">
+                {endMessages[0]}
+            </h3>
+            <p className="text-base/5 text-[#727279]">{endMessages[1]}</p>
             <div className={`grid ${mode === 'timed' ? 'grid-cols-3' : 'grid-cols-4'} gap-4`}>
                 <div className="border border-[#262626] rounded rounded-[10px] px-4 py-2">
                     <h4 className="text-[#727279]">WPM:</h4>
@@ -78,7 +98,7 @@ export default function EndSection ({ mode, end, wpm, accuracy, timeInSec = null
                             hover:bg-transparent hover:text-white
                             active:bg-transparent active:text-white"
             >
-                {endLines.firstTime[2]}
+                {endMessages[2]}
             </button>
         </div>
     );

@@ -23,6 +23,8 @@ interface TypingSectionProps {
     setElapsed: React.Dispatch<React.SetStateAction<number>>;
     wpm: number;
     accuracyInPercent: number;
+    bestWpm: number; 
+    setBestWpm: (bestWpm: number) => void;
 }
 
 export default function TypingSection ({ 
@@ -35,7 +37,8 @@ export default function TypingSection ({
                                         timeInSec, setTimeInSec,
                                         typed, setTyped,
                                         setElapsed, currentText,
-                                        wpm, accuracyInPercent
+                                        wpm, accuracyInPercent,
+                                        bestWpm, setBestWpm
                                     }: TypingSectionProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -74,8 +77,19 @@ export default function TypingSection ({
         // Check if test is finished
         if (value.length === currentText.length) {
             setEnd(true);
+
+            finishTest();
         }
     }; 
+
+    const finishTest = () => {
+        setEnd(true);
+
+        if (wpm > bestWpm) {
+            setBestWpm(wpm);
+            localStorage.setItem("bestWpm", String(wpm));
+        }
+    };
 
     useEffect(() => {
         if (!start || end) return;
@@ -84,20 +98,24 @@ export default function TypingSection ({
             setElapsed(prev => prev + 1);
 
             setTimeInSec(prev => {
-                if (mode === 'timed') {
-                    if (prev <= 1) {
-                        setEnd(true);
-                        return 0;
-                    }
-                    return prev - 1;
-                } else {
-                    return prev + 1;
+            if (mode === 'timed') {
+                if (prev <= 1) {
+                finishTest();   // ← instead of setEnd + setBestWpm
+                return 0;
                 }
+                return prev - 1;
+            }
+            return prev + 1;
             });
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [start, end, mode, setElapsed, setTimeInSec, setEnd]);
+    }, [start, end, mode]);
+
+    const handleClean = () => {
+        setBestWpm(0);
+        localStorage.removeItem("bestWpm");
+    }
 
     return (
         <div className={`${end === false ? 'h-full' : 'h-0'} duration-500 overflow-hidden`}>
@@ -221,6 +239,7 @@ export default function TypingSection ({
                     <p className="text-center">Or click the text and start typing</p>
                 </div>
             </div>
+            <button type="button" onClick={() => handleClean()}>clean</button>
         </div>
     );
 }
