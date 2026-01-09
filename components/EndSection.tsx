@@ -10,15 +10,16 @@ interface EndSectionProps {
     symbolsSum: number;
     handleRestart: () => void;
     mode: string;
-    bestWpm: number;
+    currentBestWpm: number | null;
 }
 
 export default function EndSection ({ 
                                         mode, end, wpm, accuracy, 
                                         timeInSec = null, 
                                         symbolsRight, symbolsSum, 
-                                        handleRestart, bestWpm 
+                                        handleRestart, currentBestWpm 
                                     }: EndSectionProps) {
+    //Lines for last messages
     const endLines = {
         firstTime: [
             'Baseline Established',
@@ -37,11 +38,12 @@ export default function EndSection ({
         ]
     }
 
+    //Logic for last message
     const getEndMessage = () => {
-        if (bestWpm === 0)
+        if (currentBestWpm === null || currentBestWpm === 0)
             return endLines.firstTime;
-
-        if (wpm > bestWpm)
+        
+        if (wpm > currentBestWpm)
             return endLines.higerScore;
 
         return endLines.lowerScore;

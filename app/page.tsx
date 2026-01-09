@@ -9,14 +9,23 @@ import { DifficultyData } from "@/types/types";
 
 export default function Home() {
   const data: DifficultyData = typingData;
-  const [bestWpm, setBestWpm] = useState<number>(0);
+  const [hydrated, setHydrated] = useState(false); 
+  const [bestWpm, setBestWpm] = useState(0); 
+  
+  useEffect(() => { 
+    setHydrated(true); 
+  }, []); 
+  
+  useEffect(() => { 
+    if (!hydrated) return; 
+    const saved = localStorage.getItem("bestWpm"); 
 
-  useEffect(() => {
-      const saved = localStorage.getItem("bestWpm");
-      if (saved) {
-          setBestWpm(Number(saved));
-      }
-  }, []);
+    if (saved) 
+      setBestWpm(Number(saved)); 
+    
+  }, [hydrated]); 
+  
+  if (!hydrated) return null;
 
   return (
     <div className="flex flex-col gap-3 min-h-screen justify-start py-5 bg-[hsl(0, 0%, 7%)] font-sans">

@@ -41,7 +41,9 @@ export default function TypingSection ({
                                         bestWpm, setBestWpm
                                     }: TypingSectionProps) {
     const inputRef = useRef<HTMLInputElement>(null);
+    let globalIndex = 0;
 
+    //Logic for starting typing test
     const startTest = () => {
         setStart(true);
 
@@ -54,11 +56,13 @@ export default function TypingSection ({
         setTimeout(() => inputRef.current?.focus(), 50);
     };
 
+    //Setting difficlty and random text from that difficulty
     const handleDifficulty = ( diff: DifficultyProps ) => {
         setDifficulty(diff);
         setTextId(Math.floor(Math.random() * 10) + 1);
     };
 
+    //Setting mode 
     const handleModeChange = (newMode: string) => {
         setMode(newMode);
         if (newMode === 'timed') {
@@ -68,20 +72,7 @@ export default function TypingSection ({
         }
     };
 
-    const handleTyping = (value: string) => {
-        // Prevent typing beyond the text length
-        if (value.length > currentText.length) return;
-
-        setTyped(value);
-
-        // Check if test is finished
-        if (value.length === currentText.length) {
-            setEnd(true);
-
-            finishTest();
-        }
-    }; 
-
+    //Logic for typing test to end
     const finishTest = () => {
         setEnd(true);
 
@@ -90,6 +81,19 @@ export default function TypingSection ({
             localStorage.setItem("bestWpm", String(wpm));
         }
     };
+
+    //Logic typing
+    const handleTyping = (value: string) => {
+        // Prevent typing beyond the text length
+        if (value.length > currentText.length) return;
+
+        setTyped(value);
+
+        // Check if test is finished
+        if (value.length === currentText.length) {
+            finishTest();
+        }
+    }; 
 
     useEffect(() => {
         if (!start || end) return;
@@ -100,7 +104,7 @@ export default function TypingSection ({
             setTimeInSec(prev => {
             if (mode === 'timed') {
                 if (prev <= 1) {
-                finishTest();   // ← instead of setEnd + setBestWpm
+                finishTest();
                 return 0;
                 }
                 return prev - 1;
@@ -115,7 +119,7 @@ export default function TypingSection ({
     const handleClean = () => {
         setBestWpm(0);
         localStorage.removeItem("bestWpm");
-    }
+    };
 
     return (
         <div className={`${end === false ? 'h-full' : 'h-0'} duration-500 overflow-hidden`}>
@@ -189,21 +193,50 @@ export default function TypingSection ({
                     </div>
                 </div>
             </div>
-            <div className="relative py-5 min-h-130">
-                <p onClick={() => inputRef.current?.focus()} className="text-[35px] text-base/12 leading-[1.2] font-mono flex flex-wrap">
-                    {currentText.split("").map((char, i) => {
-                        let color = "";
+            <div className="relative py-5 min-h-100">
+                <p
+                    onClick={() => inputRef.current?.focus()}
+                    className="text-[35px] leading-[1.2] font-mono flex flex-wrap"
+                >
+                    {currentText.split(" ").map((word, wordIndex) => {
+                        const wordSpans = word.split("").map((char, charIndex) => {
+                        const index = globalIndex++;
 
-                        if (i < typed.length) { 
-                            color = typed[i] === char ? "text-[#4cd67a]" : "text-[#d64c5a] decoration-[2px] underline underline-offset-6"; 
-                        } else { 
-                            color = "text-white"; 
+                        let color = "";
+                        if (index < typed.length) {
+                            color =
+                            typed[index] === char
+                                ? "text-[#4cd67a]"
+                                : "text-[#d64c5a] decoration-[2px] underline underline-offset-6";
+                        } else {
+                            color = "text-white";
+                        }
+
+                            return (
+                                <span key={charIndex} className={`${color} duration-300`}>
+                                    {char}
+                                </span>
+                            );
+                        });
+
+                        // Handle the space after the word
+                        const spaceIndex = globalIndex++;
+
+                        let spaceColor = "";
+                        if (spaceIndex < typed.length) {
+                            spaceColor =
+                                typed[spaceIndex] === " "
+                                ? "text-[#4cd67a]"
+                                : "text-[#d64c5a] decoration-[2px] underline underline-offset-6";
+                        } else {
+                            spaceColor = "text-white";
                         }
 
                         return (
-                            <span key={i} className={`${color} duration-300`}>
-                                {char === " " ? "\u00A0" : char}
-                            </span>
+                        <span key={wordIndex} className="whitespace-nowrap flex">
+                            {wordSpans}
+                            <span className={`${spaceColor} duration-300`}>&nbsp;</span>
+                        </span>
                         );
                     })}
                 </p>

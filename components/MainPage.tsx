@@ -13,10 +13,12 @@ interface MainPageProps {
 }
 
 export default function MainPage ({ data, bestWpm, setBestWpm }: MainPageProps) {
-
-
+    const [currentBestWpm, setCurrentBestWpm] = useState<number | null>(null);
+    
     const [difficulty, setDifficulty] = useState<DifficultyProps>('easy');
-    const [textId, setTextId] = useState<number>(1);
+    const [textId, setTextId] = useState<number>(() => {
+        return Math.floor(Math.random() * 10) + 1;
+    });
     const [mode, setMode] = useState<string>('timed');
     const [start, setStart] = useState<boolean>(false);
     const [end, setEnd] = useState<boolean>(false);
@@ -39,11 +41,13 @@ export default function MainPage ({ data, bestWpm, setBestWpm }: MainPageProps) 
         ? Math.round((correctChars / 5) / (elapsed / 60))
         : 0;
 
+    //Logic for restart button
     const handleRestart = () => {
         setStart(false);
         setEnd(false);
         setTyped("");
         setElapsed(0);
+        setCurrentBestWpm(bestWpm);
 
         if (mode === 'timed') { 
             setTimeInSec(60); 
@@ -51,6 +55,13 @@ export default function MainPage ({ data, bestWpm, setBestWpm }: MainPageProps) 
             setTimeInSec(0); 
         }
     };
+
+    useEffect(() => { 
+        const saved = localStorage.getItem("bestWpm"); 
+        const loaded = saved ? Number(saved) : 0; 
+        setBestWpm(loaded); 
+        setCurrentBestWpm(loaded); 
+    }, []);
 
     return (
         <main className="max-w-[12orem] w-full px-15 flex flex-col">
@@ -76,8 +87,9 @@ export default function MainPage ({ data, bestWpm, setBestWpm }: MainPageProps) 
                 symbolsRight={typed.split("").filter((c, i) => c === currentText[i]).length} 
                 symbolsSum={currentText.length}
                 handleRestart={handleRestart}
-                bestWpm={bestWpm}
+                currentBestWpm={currentBestWpm}
             />
+            <p>{currentBestWpm}</p>
         </main>
     );
 }
