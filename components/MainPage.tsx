@@ -15,11 +15,22 @@ interface MainPageProps {
 export default function MainPage ({ data, bestWpm, setBestWpm }: MainPageProps) {
     const [currentBestWpm, setCurrentBestWpm] = useState<number | null>(null);
     
-    const [difficulty, setDifficulty] = useState<DifficultyProps>('easy');
+    const [difficulty, setDifficulty] = useState<DifficultyProps>(() => {
+        if (typeof window === "undefined") return "easy";
+
+        const saved = localStorage.getItem("difficulty");
+        return saved ? (saved as DifficultyProps) : "easy";
+    });
+
     const [textId, setTextId] = useState<number>(() => {
         return Math.floor(Math.random() * 10) + 1;
     });
-    const [mode, setMode] = useState<string>('timed');
+    const [mode, setMode] = useState<string>(() => {
+        if (typeof window === "undefined") return "timed";
+
+        const saved = localStorage.getItem("mode");
+        return saved ? (saved as string) : "timed";
+    });
     const [start, setStart] = useState<boolean>(false);
     const [end, setEnd] = useState<boolean>(false);
 
@@ -64,7 +75,7 @@ export default function MainPage ({ data, bestWpm, setBestWpm }: MainPageProps) 
     }, []);
 
     return (
-        <main className="max-w-[12orem] w-full px-15 flex flex-col">
+        <main className="relative max-w-[120rem] w-full px-auto items-center">
             <TypingSection 
                 handleRestart={handleRestart}
                 difficulty={difficulty} setDifficulty={setDifficulty}
@@ -89,7 +100,6 @@ export default function MainPage ({ data, bestWpm, setBestWpm }: MainPageProps) 
                 handleRestart={handleRestart}
                 currentBestWpm={currentBestWpm}
             />
-            <p>{currentBestWpm}</p>
         </main>
     );
 }

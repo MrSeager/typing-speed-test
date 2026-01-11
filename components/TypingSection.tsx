@@ -60,6 +60,7 @@ export default function TypingSection ({
     const handleDifficulty = ( diff: DifficultyProps ) => {
         setDifficulty(diff);
         setTextId(Math.floor(Math.random() * 10) + 1);
+        localStorage.setItem("difficulty", diff);
     };
 
     //Setting mode 
@@ -69,7 +70,8 @@ export default function TypingSection ({
             setTimeInSec(60);
         } else {
             setTimeInSec(0);
-        }
+        };
+        localStorage.setItem("mode", newMode);
     };
 
     //Logic for typing test to end
@@ -122,7 +124,7 @@ export default function TypingSection ({
     };
 
     return (
-        <div className={`${end === false ? 'h-full' : 'h-0'} duration-500 overflow-hidden`}>
+        <div className={`mx-15 absolute ${end ? "opacity-0 scale-95 z-0" : "opacity-100 scale-100 z-5"} duration-500`}>
             <div className="flex items-center justify-between border-b py-5">
                 <div className="flex gap-3">
                     <h2 className="text-[#727279]">WPM: <span className="text-white text-lg font-semibold">{wpm}</span></h2>
@@ -193,7 +195,7 @@ export default function TypingSection ({
                     </div>
                 </div>
             </div>
-            <div className="relative py-5 min-h-100">
+            <div className="relative py-5">
                 <p
                     onClick={() => inputRef.current?.focus()}
                     className="text-[35px] leading-[1.2] font-mono flex flex-wrap"

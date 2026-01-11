@@ -52,7 +52,7 @@ export default function EndSection ({
     const endMessages = getEndMessage();
 
     return (
-        <div className={`${end === true ? 'h-full py-15' : 'h-0 py-0'} flex flex-col gap-5 items-center justify-center overflow-hidden`}>
+        <div className={`w-full absolute ${end ? "opacity-100 scale-100 py-15 z-5" : "opacity-0 scale-95 py-0 z-0"} flex flex-col gap-5 items-center justify-center overflow-hidden`}>
             <div className="relative">
                 <span className="absolute z-0 inline-flex h-full w-full animate-ping rounded-full bg-[#4cd67a] opacity-75"></span>
                 <Image 

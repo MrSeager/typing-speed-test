@@ -9,7 +9,7 @@ interface HeaderNavProps {
 
 export default function HeaderNav ({ bestWpm }: HeaderNavProps) {
     return(
-        <header className="max-w-[12orem] w-full px-15">
+        <header className="max-w-[120rem] w-full px-15">
             <nav className="w-full flex items-center justify-between">
                 <Image 
                     src={'/images/logo-large.svg'}
