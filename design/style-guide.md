@@ -34,7 +34,7 @@ The designs were created to the following widths:
 
 ### Yellow
 
-- **Yellow 400**: hsl(49, 85%, 70%)
+- **Yellow 400**: hsl(49, 85%, 70%) #f4dc71
 
 ## Typography
 

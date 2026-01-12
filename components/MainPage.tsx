@@ -75,7 +75,7 @@ export default function MainPage ({ data, bestWpm, setBestWpm }: MainPageProps) 
     }, []);
 
     return (
-        <main className="relative max-w-[120rem] w-full px-auto items-center">
+        <main className="max-w-[120rem] w-full px-auto items-center">
             <TypingSection 
                 handleRestart={handleRestart}
                 difficulty={difficulty} setDifficulty={setDifficulty}

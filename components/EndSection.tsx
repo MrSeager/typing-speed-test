@@ -1,5 +1,7 @@
 //Components
 import Image from "next/image";
+//Icons
+import { VscDebugRestart } from "react-icons/vsc";
 
 interface EndSectionProps {
     end: boolean;
@@ -52,15 +54,24 @@ export default function EndSection ({
     const endMessages = getEndMessage();
 
     return (
-        <div className={`w-full absolute ${end ? "opacity-100 scale-100 py-15 z-5" : "opacity-0 scale-95 py-0 z-0"} flex flex-col gap-5 items-center justify-center overflow-hidden`}>
+        <div className={`absolute inset-0 w-full ${end ? "opacity-100 scale-100 py-15 z-5 top-0 " : "opacity-0 scale-95 py-0 z-0"} flex flex-col gap-5 items-center justify-center overflow-hidden`}>
             <div className="relative">
-                <span className="absolute z-0 inline-flex h-full w-full animate-ping rounded-full bg-[#4cd67a] opacity-75"></span>
-                <Image 
-                    src={"/images/icon-completed.svg"}
-                    alt="completed"
-                    width={50}
-                    height={50}
-                />
+                <span className={`absolute z-0 inline-flex h-full w-full animate-ping rounded-full ${currentBestWpm === null || currentBestWpm === 0 || wpm < currentBestWpm ? 'bg-[#4cd67a]' : 'bg-[#f4dc71]'} opacity-75`}></span>
+                {currentBestWpm === null || currentBestWpm === 0 || wpm < currentBestWpm ?
+                    <Image 
+                        src={"/images/icon-completed.svg"}
+                        alt="completed"
+                        width={50}
+                        height={50}
+                    /> 
+                    :
+                    <Image 
+                        src={"/images/icon-new-pb.svg"}
+                        alt="completed"
+                        width={50}
+                        height={50}
+                    />
+                }
             </div>
             <h3 className="text-[30px] font-bold text-center text-base/7">
                 {endMessages[0]}
@@ -96,12 +107,41 @@ export default function EndSection ({
             <button 
                 type="button"
                 onClick={() => handleRestart()}
-                className="bg-white border border-white text-[#262626] font-bold rounded px-4 py-2 duration-500
+                className="bg-white group flex gap-2 items-center border border-white text-[#262626] font-bold rounded px-4 py-2 duration-500
                             hover:bg-transparent hover:text-white
                             active:bg-transparent active:text-white"
             >
                 {endMessages[2]}
+                <VscDebugRestart size={20} className="transition-transform duration-500 group-hover:-rotate-360" />
             </button>
+            {currentBestWpm === null || currentBestWpm === 0 || wpm < currentBestWpm ? 
+                (
+                    <span>
+                        <Image 
+                            src={'/images/pattern-star-1.svg'}
+                            alt="bg star"
+                            width={50}
+                            height={50}
+                            className="absolute top-70 right-50"
+                        />
+                        <Image 
+                            src={'/images/pattern-star-2.svg'}
+                            alt="bg star"
+                            width={50}
+                            height={50}
+                            className="absolute top-30 left-50"
+                        />
+                    </span>
+                ) : (
+                    <Image 
+                        src={'/images/pattern-confetti.svg'}
+                        alt="bg star"
+                        width={2000}
+                        height={500}
+                        className="absolute bottom-0 z-[-5]"
+                    />
+                )
+            }
         </div>
     );
 }

@@ -1,8 +1,11 @@
 'use client'
 //Components
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 //Types
 import { DifficultyProps } from "@/types/types";
+//Icons
+import { VscDebugRestart } from "react-icons/vsc";
 
 interface TypingSectionProps {
     handleRestart: () => void; 
@@ -124,7 +127,7 @@ export default function TypingSection ({
     };
 
     return (
-        <div className={`mx-15 absolute ${end ? "opacity-0 scale-95 z-0" : "opacity-100 scale-100 z-5"} duration-500`}>
+        <div className={`absolute mx-15 ${end ? "opacity-0 scale-95 z-0" : "opacity-100 scale-100 z-5"} duration-500`}>
             <div className="flex items-center justify-between border-b py-5">
                 <div className="flex gap-3">
                     <h2 className="text-[#727279]">WPM: <span className="text-white text-lg font-semibold">{wpm}</span></h2>
@@ -257,9 +260,10 @@ export default function TypingSection ({
                     <button 
                         type="button"
                         onClick={() => handleRestart()}
-                        className="bg-[#262626] cursor-pointer px-3 py-2 rounded-[5px]"
+                        className="bg-[#262626] group flex gap-2 items-center cursor-pointer px-3 py-2 rounded-[5px]"
                     >
                         Restart Test
+                        <VscDebugRestart size={20} className="transition-transform duration-500 group-hover:-rotate-360" />
                     </button>
                 </div>
                 <div onClick={startTest} className={`absolute flex flex-col gap-2 items-center justify-center top-0 w-full ${start === false ? 'h-full' : 'h-0'} overflow-hidden backdrop-blur-md duration-500`}>
@@ -274,7 +278,9 @@ export default function TypingSection ({
                     <p className="text-center">Or click the text and start typing</p>
                 </div>
             </div>
-            <button type="button" onClick={() => handleClean()}>clean</button>
+            {/*<button type="button" onClick={() => handleClean()}>
+                clean
+            </button>*/}
         </div>
     );
 }
