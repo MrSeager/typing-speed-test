@@ -48,9 +48,9 @@ export default function MainPage ({ data, bestWpm, setBestWpm }: MainPageProps) 
         ? Math.round((correctChars / typed.length) * 100)
         : 100;
 
-    const wpm = elapsed > 0
-        ? Math.round((correctChars / 5) / (elapsed / 60))
-        : 0;
+    const effectiveElapsed = Math.max(elapsed, 1); // avoid divide by zero
+    const wpm = Math.round((correctChars / 5) / (effectiveElapsed / 60));
+
 
     //Logic for restart button
     const handleRestart = () => {

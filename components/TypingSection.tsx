@@ -1,7 +1,7 @@
 'use client'
 //Components
-import Image from "next/image";
 import { useEffect, useRef } from "react";
+import TypingSectionItemOne from "./TypingSectionItemOne";
 //Types
 import { DifficultyProps } from "@/types/types";
 //Icons
@@ -89,16 +89,20 @@ export default function TypingSection ({
 
     //Logic typing
     const handleTyping = (value: string) => {
-        // Prevent typing beyond the text length
         if (value.length > currentText.length) return;
-
         setTyped(value);
+    };
 
-        // Check if test is finished
-        if (value.length === currentText.length) {
+    useEffect(() => {
+        if (!start || end) return;
+
+        const finishedByTyping = typed.length === currentText.length;
+        const finishedByTimer = mode === "timed" && timeInSec === 0;
+
+        if (finishedByTyping || finishedByTimer) {
             finishTest();
         }
-    }; 
+    }, [typed, timeInSec, start, end, mode, currentText.length]);
 
     useEffect(() => {
         if (!start || end) return;
@@ -107,12 +111,8 @@ export default function TypingSection ({
             setElapsed(prev => prev + 1);
 
             setTimeInSec(prev => {
-            if (mode === 'timed') {
-                if (prev <= 1) {
-                finishTest();
-                return 0;
-                }
-                return prev - 1;
+            if (mode === "timed") {
+                return prev > 0 ? prev - 1 : 0;
             }
             return prev + 1;
             });
@@ -127,77 +127,17 @@ export default function TypingSection ({
     };
 
     return (
-        <div className={`absolute mx-15 ${end ? "opacity-0 scale-95 z-0" : "opacity-100 scale-100 z-5"} duration-500`}>
-            <div className="flex items-center justify-between border-b py-5">
-                <div className="flex gap-3">
-                    <h2 className="text-[#727279]">WPM: <span className="text-white text-lg font-semibold">{wpm}</span></h2>
-                    <h2 className="text-[#727279]">Accuracy: <span className={`${accuracyInPercent === 100 ? 'text-[#4cd67a]' : 'text-[#d64c5a]'} duration-500 text-lg font-semibold`}>{accuracyInPercent}%</span></h2>
-                    <h2 className="text-[#727279]">Time: <span className="text-white text-lg font-semibold">{Math.floor(timeInSec / 60)}:{String(timeInSec % 60).padStart(2, "0")}</span></h2>
-                </div>
-                <div className="flex gap-3">
-                    <div className="flex gap-2">
-                        <h2 className="text-[#727279]">Difficulty:</h2>
-                        <button 
-                            type="button"
-                            onClick={() => handleDifficulty('easy')}
-                            disabled={start === true}
-                            className={`${difficulty === 'easy' ? 'outline-[#4da6ff]' : 'outline-transparent'} 
-                                        cursor-pointer outline-2 outline-offset-3 rounded-[10px] px-2 border border-[#727279] duration-500
-                                        hover:border-white
-                                        focus:border-[#4da6ff] focus:text-[#4da6ff]`}
-                        >
-                            Easy
-                        </button>
-                        <button 
-                            type="button"
-                            onClick={() => handleDifficulty('medium')}
-                            disabled={start === true}
-                            className={`${difficulty === 'medium' ? 'outline-[#4da6ff]' : 'outline-transparent'} 
-                                        cursor-pointer outline-2 outline-offset-3 rounded-[10px] px-2 border border-[#727279] duration-500
-                                        hover:border-white
-                                        focus:border-[#4da6ff] focus:text-[#4da6ff]`}
-                        >
-                            Medium
-                        </button>
-                        <button 
-                            type="button"
-                            onClick={() => handleDifficulty('hard')}
-                            disabled={start === true}
-                            className={`${difficulty === 'hard' ? 'outline-[#4da6ff]' : 'outline-transparent'} 
-                                        cursor-pointer outline-2 outline-offset-3 rounded-[10px] px-2 border border-[#727279] duration-500
-                                        hover:border-white
-                                        focus:border-[#4da6ff] focus:text-[#4da6ff]`}
-                        >
-                            Hard
-                        </button>
-                    </div>
-                    <div className="flex gap-2">
-                        <h2 className="text-[#727279]">Mode:</h2>
-                        <button 
-                            type="button"
-                            onClick={() => handleModeChange('timed')}
-                            disabled={start === true}
-                            className={`${mode === 'timed' ? 'outline-[#4da6ff]' : 'outline-transparent'} 
-                                        cursor-pointer outline-2 outline-offset-3 rounded-[10px] px-2 border border-[#727279] duration-500
-                                        hover:border-white
-                                        focus:border-[#4da6ff] focus:text-[#4da6ff]`}
-                        >
-                            Timed(60s)
-                        </button>
-                        <button 
-                            type="button"
-                            onClick={() => handleModeChange('passage')}
-                            disabled={start === true}
-                            className={`${mode === 'passage' ? 'outline-[#4da6ff]' : 'outline-transparent'} 
-                                        cursor-pointer outline-2 outline-offset-3 rounded-[10px] px-2 border border-[#727279] duration-500
-                                        hover:border-white
-                                        focus:border-[#4da6ff] focus:text-[#4da6ff]`}
-                        >
-                            Passage
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div className={`absolute mx-5 lg:mx-15 ${end ? "opacity-0 scale-95 z-0" : "opacity-100 scale-100 z-5"} duration-500`}>
+            <TypingSectionItemOne 
+                start={start} 
+                mode={mode} 
+                handleDifficulty={handleDifficulty}
+                handleModeChange={handleModeChange} 
+                difficulty={difficulty}
+                accuracyInPercent={accuracyInPercent}
+                wpm={wpm}
+                timeInSec={timeInSec}
+            />
             <div className="relative py-5">
                 <p
                     onClick={() => inputRef.current?.focus()}
