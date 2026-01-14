@@ -28,7 +28,7 @@ export default function Home() {
   if (!hydrated) return null;
 
   return (
-    <div className="flex flex-col items-center gap-3 min-h-screen justify-start py-15 bg-[hsl(0, 0%, 7%)] font-sans">
+    <div className="flex flex-col items-center gap-3 min-h-screen justify-start py-5 lg:py-15 bg-[hsl(0, 0%, 7%)] font-sans">
       <HeaderNav 
         bestWpm={bestWpm}
       />

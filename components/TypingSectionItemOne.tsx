@@ -17,6 +17,7 @@ interface TypingSectionItemOneProps {
 
 export default function TypingSectionItemOne ({ start, mode, handleDifficulty, handleModeChange, difficulty, accuracyInPercent, wpm, timeInSec }: TypingSectionItemOneProps) {
     const [openDiff, setOpenDiff] = useState<boolean>(false);
+    const [openMode, setOpenMode] = useState<boolean>(false);
     
     return (
         <div className="flex flex-col lg:flex-row items-center justify-between border-b py-5 gap-5">
@@ -137,6 +138,36 @@ export default function TypingSectionItemOne ({ start, mode, handleDifficulty, h
                     >
                         Passage
                     </button>
+                </div>
+                
+                {/*Mobile*/}
+                <div className="lg:hidden relative">
+                    {/* Trigger */}
+                    <button type="button" disabled={start === true} onClick={() => setOpenMode((prev) => !prev)}
+                        className="min-w-[140px] w-full bg-transparent border rounded-[10px] px-3 py-2 text-white flex justify-between items-center"
+                    >
+                        <span className="capitalize">{mode}</span>
+
+                        {/* Custom arrow */}
+                        <span className="text-white text-sm">▼</span>
+                    </button>
+
+                    {/* Dropdown */}
+                    {openMode && (
+                        <div className="absolute left-0 right-0 mt-1 bg-[#1a1a1a] border rounded-[10px] shadow-lg z-10">
+                        <div onClick={() => { handleModeChange("timed"); setOpenMode(false); }}
+                            className="px-3 py-2 text-white hover:bg-[#333] cursor-pointer"
+                        >
+                            {mode === "timed" ? "● Timed(60s)" : "○ Timed(60s)"}
+                        </div>
+
+                        <div onClick={() => { handleModeChange("passage"); setOpenMode(false); }}
+                            className="px-3 py-2 text-white hover:bg-[#333] cursor-pointer"
+                        >
+                            {mode === "passage" ? "● Passage" : "○ Passage"}
+                        </div>
+                    </div>
+                )}
                 </div>
             </div>
         </div>

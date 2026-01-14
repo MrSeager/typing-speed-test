@@ -44,6 +44,8 @@ export default function TypingSection ({
                                         bestWpm, setBestWpm
                                     }: TypingSectionProps) {
     const inputRef = useRef<HTMLInputElement>(null);
+    const activeCharRef = useRef<HTMLSpanElement | null>(null);
+
     let globalIndex = 0;
 
     //Logic for starting typing test
@@ -121,6 +123,28 @@ export default function TypingSection ({
         return () => clearInterval(interval);
     }, [start, end, mode]);
 
+    useEffect(() => {
+        const el = activeCharRef.current;
+        if (!el) return;
+
+        const rect = el.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+
+        const topSafeZone = 80;   // px from top where it's allowed
+        const bottomSafeZone = 120; // px from bottom where it's allowed
+
+        const isAbove = rect.top < topSafeZone;
+        const isBelow = rect.bottom > viewportHeight - bottomSafeZone;
+
+        if (isAbove || isBelow) {
+            el.scrollIntoView({
+            behavior: "auto",    // or "smooth" if it feels ok
+            block: "nearest",     // minimal scroll needed
+            inline: "nearest",
+            });
+        }
+    }, [typed]);
+
     const handleClean = () => {
         setBestWpm(0);
         localStorage.removeItem("bestWpm");
@@ -141,11 +165,13 @@ export default function TypingSection ({
             <div className="relative py-5">
                 <p
                     onClick={() => inputRef.current?.focus()}
-                    className="text-[35px] leading-[1.2] font-mono flex flex-wrap"
+                    className="text-[20px] md:text-[35px] leading-[1.2] font-mono flex flex-wrap"
                 >
                     {currentText.split(" ").map((word, wordIndex) => {
                         const wordSpans = word.split("").map((char, charIndex) => {
                         const index = globalIndex++;
+
+                        const isActive = index === typed.length;
 
                         let color = "";
                         if (index < typed.length) {
@@ -158,7 +184,7 @@ export default function TypingSection ({
                         }
 
                             return (
-                                <span key={charIndex} className={`${color} duration-300`}>
+                                <span key={charIndex} ref={isActive ? activeCharRef : null} className={`${color} duration-300`}>
                                     {char}
                                 </span>
                             );
