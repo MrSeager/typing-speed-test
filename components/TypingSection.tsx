@@ -145,11 +145,6 @@ export default function TypingSection ({
         }
     }, [typed]);
 
-    const handleClean = () => {
-        setBestWpm(0);
-        localStorage.removeItem("bestWpm");
-    };
-
     return (
         <div className={`absolute mx-5 lg:mx-15 ${end ? "opacity-0 scale-95 z-0" : "opacity-100 scale-100 z-5"} duration-500`}>
             <TypingSectionItemOne 
@@ -244,9 +239,6 @@ export default function TypingSection ({
                     <p className="text-center">Or click the text and start typing</p>
                 </div>
             </div>
-            {/*<button type="button" onClick={() => handleClean()}>
-                clean
-            </button>*/}
         </div>
     );
 }
