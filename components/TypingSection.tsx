@@ -146,7 +146,7 @@ export default function TypingSection ({
     }, [typed]);
 
     return (
-        <div className={`absolute mx-5 lg:mx-15 ${end ? "opacity-0 scale-95 z-0" : "opacity-100 scale-100 z-5"} duration-500`}>
+        <div className={`absolute mx-5 lg:mx-15 max-w-[120rem] ${end ? "opacity-0 scale-95 z-0" : "opacity-100 scale-100 z-5"} duration-500`}>
             <TypingSectionItemOne 
                 start={start} 
                 mode={mode} 
